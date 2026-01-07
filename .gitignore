@@ -1,3 +1,6 @@
+# Ignore downloaded gzipped files
+*.gz
+
 # Ignore created databases
 *.db
 
