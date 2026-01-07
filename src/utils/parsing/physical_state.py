@@ -3,7 +3,7 @@ PhysicalState class.
 """
 from typing import Literal, Optional
 from dataclasses import dataclass
-from polars import DataFrame
+from pandas import DataFrame
 
 from .data_block import DataBlock
 
@@ -126,7 +126,7 @@ class PhysicalState:
         """
         Returns a DataFrame containing this instance's data.
         """
-        from polars import DataFrame
+        from pandas import DataFrame
 
         assert self.data_blocks is not None
 

@@ -1,19 +1,71 @@
 """
 Complete script for reading data files and writing them to a single database.
 """
-
 import sys
 from pathlib import Path
+from argparse import ArgumentParser, Namespace
 
 this_path: Path = Path(__file__)
 if (pkg_path := this_path.parents[1]) not in sys.path:
     sys.path.append(str(pkg_path))
 
-if __name__ == '__main__':
-    from argparse import ArgumentParser
+from src.utils.writing import create_dataframes, connect_to_db, write_dfs_to_db
 
+DEFAULT_NAMESPACE: Namespace = Namespace()
+DEFAULT_NAMESPACE.name = 'db'
+DEFAULT_NAMESPACE.rec_case = None
+DEFAULT_NAMESPACE.data_types = None
+DEFAULT_NAMESPACE.z_bounds = (1, 100)
+DEFAULT_NAMESPACE.replace = False
+
+def main(args: Namespace) -> None:
     print("Initialising database:")
+    print(f"> Parsed: {args}")
 
+    # The current file
+    this_file: Path = Path(__file__)
+
+    data_dir: Path = this_file.parents[1] / 'VI_64'
+    assert data_dir.exists()
+    
+    n_files: int = len(list(data_dir.iterdir()))
+    if n_files == 0:
+        raise FileNotFoundError(
+            f"No data files found in the 'VI_64' directory!"
+        )
+    
+    print("> Found data files in 'VI_64'.")
+    
+    # Creating the dataframes
+    dataframes = create_dataframes(
+        data_dir,
+        rec_case = args.rec_case,
+        data_types = args.data_types,
+        z_bounds = args.z_bounds,
+    )
+    
+    print("> Created dataframes.")
+
+    # Create connection to db
+    _, connection = connect_to_db(
+        name = args.name,
+        replace = args.replace,
+    )
+
+    print("> Connected to the database.")
+
+    # Write dataframes to db
+    write_dfs_to_db(
+        dataframes,
+        connection,
+        if_exists = 'append', # Appends to the initialised database
+    )
+
+    print("> Wrote the data onto the database.")
+
+    print("> Success! Finished initialising database.")
+
+if __name__ == '__main__':
     parser = ArgumentParser(
         'init_db',
         description = 'reads data files and writes them into a single database',
@@ -50,52 +102,4 @@ if __name__ == '__main__':
         action = 'store_true',
         help = 'whether to replace the previous database with the same name'
     )
-    args = parser.parse_args()
-
-    print(f"> Parsed: {args}")
-
-    # The current file
-    this_file: Path = Path(__file__)
-
-    data_dir: Path = this_file.parents[1] / 'VI_64'
-    assert data_dir.exists()
-    
-    n_files: int = len(list(data_dir.iterdir()))
-    if n_files == 0:
-        raise FileNotFoundError(
-            f"No data files found in the 'VI_64' directory!"
-        )
-    
-    print("> Found data files in 'VI_64'.")
-    
-    # Creating the dataframes
-    from src.utils.writing import create_dataframes
-    dataframes = create_dataframes(
-        data_dir,
-        rec_case = args.rec_case,
-        data_types = args.data_types,
-        z_bounds = args.z_bounds,
-    )
-    
-    print("> Created dataframes.")
-
-    # Create connection to db
-    from src.utils.writing import connect_to_db
-    _, connection = connect_to_db(
-        name = args.name,
-        replace = args.replace,
-    )
-
-    print("> Connected to the database.")
-
-    # Write dataframes to db
-    from src.utils.writing import write_dfs_to_db
-    write_dfs_to_db(
-        dataframes,
-        connection,
-        if_exists = 'append', # Appends to the initialised database
-    )
-
-    print("> Wrote the data onto the database.")
-
-    print("> Success! Finished initialising database.")
+    main(parser.parse_args())

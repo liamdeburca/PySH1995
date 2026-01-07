@@ -2,7 +2,7 @@
 .DS_Store
 
 # Ignore downloaded gzipped files
-*.gz
+VI_64/*
 
 # Ignore created databases
 *.db

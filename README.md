@@ -11,7 +11,6 @@ The aim of this project is therefore to provide the user with tools which allows
   - [Installation](#installation)
 - [Usage](#usage)
 - [Contributing](#contributing)
-- [License](#license)
 - [Acknowledgements](#acknowledgements)
 
 ## About
@@ -26,32 +25,58 @@ How to clone the project:
 git clone https://github.com/liamdeburca/PySH1995.git
 ```
 
-In order to create the main database, the code needs to access a directory of gzipped files from **SH1995**. Currently (January 2026) this can be done following these steps:
+Initialising the default database:
 
-1. Go to: https://cdsarc.cds.unistra.fr/ftp/cats/VI/64/
-2. Click on *tar.gz*.
-3. Unpacking the *tar.gz* file creates a *VI_64* folder which is used.
+```bash
+cd ../PySH1995
+python scripts/default_setup.py
+```
 
+This will download the entire dataset from SH1995 and construct an SQL database containing emission, recombination, opacity, and departure values. Due to the size of the dataset, initial construction is fairly slow, and can be sped up by selecting which features to include in the database. 
 
 ### Prerequisites
 
 ```bash
-example-tool >= 1.2.3
+python == 3.12
+numpy == 1.26
+pandas == 2.3
+requests == 2.32
+tqdm == 4.67
 ```
+
+**Note**: older versions of these packages may still work. These are just the versions of the packages I used. 
 
 ## Usage
 
-Where and how to download data from SH1995. 
-How to initialise the primary database.
-How to interact with scripts and pipelines.
+In most cases, the user should only need to use the Query class.
+
+```python
+from PySH1995 import Query
+
+# Default database
+name_of_database: str = 'db'
+# Table of emissivities
+name_of_table: str = 'emi'
+
+with Query.START(name_of_database) as q:
+    data = q.FROM(name_of_table)
+            .SELECT('z', 'n_u', 'n_l', 'value')
+            .WHERE('z == 1') 
+            .WHERE('n_l == 1')
+            .ORDER_BY('wave', descending=False)
+            .LIMIT(100)
+            .STOP()
+
+    column_info = q.column_info
+    table_names = q.table_names
+    column_names = q.column_names
+
+emissivities: list[float] = data['val']
+```
 
 ## Contributing
 
 This is (was) a small side project of mine, and it will likely stay so. If you find the tools especially helpful and would like to contribute, please contact me. 
-
-## License
-
-(No license)
 
 ## Acknowledgements
 

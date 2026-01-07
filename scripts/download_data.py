@@ -31,7 +31,7 @@ def get_description(
 
     return f"{val:.1f}{unit} bytes written"
 
-if __name__ == '__main__':
+def main() -> None:
     import requests
     import tarfile
 
@@ -44,6 +44,7 @@ if __name__ == '__main__':
 
     # The location of the output
     out_dir: Path = this_file.parents[1] / 'VI_64'
+    out_dir.mkdir(exist_ok=True)
     
     # The tar file
     path_to_tar: Path = out_dir / 'VI_64.tar.gz'
@@ -75,3 +76,6 @@ if __name__ == '__main__':
 
     # Deleting the downloaded data
     remove(path_to_tar)
+
+if __name__ == '__main__':
+    main()
