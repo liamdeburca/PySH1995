@@ -15,8 +15,8 @@ DEFAULT_NAMESPACE: Namespace = Namespace()
 DEFAULT_NAMESPACE.name = 'db'
 DEFAULT_NAMESPACE.rec_case = None
 DEFAULT_NAMESPACE.data_types = None
-DEFAULT_NAMESPACE.z_bounds = (1, 100)
-DEFAULT_NAMESPACE.replace = False
+DEFAULT_NAMESPACE.z_bounds = (1, 1)
+DEFAULT_NAMESPACE.replace = True
 
 def main(args: Namespace) -> None:
     print("Initialising database:")
@@ -94,12 +94,13 @@ if __name__ == '__main__':
     parser.add_argument(
         '--z_bounds',
         nargs = 2,
-        default = (1, 100),
+        default = (1, 1),
         help = 'lower and upper bounds on Z (both inclusive)'
     )
     parser.add_argument(
         '--replace',
-        action = 'store_true',
+        required = False,
+        default = True,
         help = 'whether to replace the previous database with the same name'
     )
     main(parser.parse_args())

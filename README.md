@@ -1,8 +1,9 @@
 # PySH1995
 
-This small Python project containts methods, classes, and scripts suitable for working with data files from "Recombination line intensities for hydrogenuc ions - IV. Total recombination coefficients and machine-readable tables for Z=1 to 8" by P.J. Storey and D.G. Hummer (1995), hereafter **SH1995**. The article presents data files containing information useful for creating hydrogenic emission templates, specifically Balmer pseudo-continuum templates, which, in fact, motivated this project. The data files presented in this article are in an ASCII format, which by modern conventions (in my opinion) is archaic.
+This small Python project contains methods, classes, and scripts suitable for working with data files from "Recombination line intensities for hydrogenic ions — IV. Total recombination coefficients and machine-readable tables for Z=1 to 8" by P.J. Storey and D.G. Hummer (1995), hereafter **SH1995**. The article presents data files containing information useful for creating hydrogenic emission templates, specifically Balmer pseudo-continuum templates, which motivated this project. The data files are in an ASCII format that, by modern conventions, is archaic.
 
-The aim of this project is therefore to provide the user with tools which allows them to easily begin extracting data, allowing them to more easily build templates (for example) of their own. 
+The aim of this project is therefore to provide users with tools that allow them to extract data easily, so they can build their own templates, for example.
+
 
 ## Table of Contents
 - [About](#about)
@@ -44,11 +45,11 @@ requests == 2.32
 tqdm == 4.67
 ```
 
-**Note**: older versions of these packages may still work. These are just the versions of the packages I used. 
+**Note**: older versions of these packages may still work. These are the package versions I used.
 
 ## Usage
 
-In most cases, the user should only need to use the Query class.
+In most cases, users only need to use the `Query` class.
 
 ```python
 from PySH1995 import Query
@@ -76,7 +77,7 @@ emissivities: list[float] = data['val']
 
 ## Contributing
 
-This is (was) a small side project of mine, and it will likely stay so. If you find the tools especially helpful and would like to contribute, please contact me. 
+This is a small side project of mine and will likely remain so. If you find the tools helpful and would like to contribute, please contact me.
 
 ## Acknowledgements
 

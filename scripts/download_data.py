@@ -74,8 +74,10 @@ def main() -> None:
     with tarfile.open(path_to_tar, 'r') as tar:
         tar.extractall(path=out_dir, filter='data')
 
-    # Deleting the downloaded data
-    remove(path_to_tar)
+    # Deleting non-useful files AND the tar-file
+    for child in out_dir.iterdir():
+        if child.name.startswith('r') and child.name.endswith('.d.gz'): continue
+        remove(child)
 
 if __name__ == '__main__':
     main()
