@@ -1,3 +1,6 @@
+# Basics
+.DS_Store
+
 # Ignore downloaded gzipped files
 *.gz
 

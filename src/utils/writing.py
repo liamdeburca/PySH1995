@@ -4,7 +4,7 @@ Submodule containing utilities for writing data to a database.
 from typing import Optional, Iterator, Iterable, Literal
 from pathlib import Path
 from sqlite3 import Connection
-from polars import DataFrame
+from pandas import DataFrame
 
 from ..custom_types import DataType, RecType
 
@@ -38,7 +38,7 @@ def initialise_db(
 def connect_to_db(
     name: Optional[str] = None,
     replace: bool = False,
-) -> Connection:
+) -> tuple[Path, Connection]:
     """
     Connects to a database.
 
@@ -63,7 +63,7 @@ def connect_to_db(
         # Connects to the existing database
         connection = connect(path_to_db)
 
-    return connection
+    return path_to_db, connection
 
 def check_path(
     path: Path,
@@ -156,11 +156,11 @@ def create_dataframes(
     z_bounds: tuple[int] = (1, 100),
 ) -> dict[DataType, DataFrame]:
     """
-    Scans through a directory's files, reads them, and adds the data to Polars
+    Scans through a directory's files, reads them, and adds the data to Pandas
     DataFrames.
     """
     from collections import defaultdict
-    from polars import DataFrame
+    from pandas import DataFrame
 
     from .parsing.physical_state import PhysicalState
 
@@ -188,7 +188,7 @@ def create_dataframes(
     all_dfs: dict[DataType, DataFrame] = dict(
         (
             dtype, 
-            DataFrame(data).sort('rec_case', 'z', 'n_l', 'n_u'),
+            DataFrame(data).sort_values(['rec_case', 'z', 'n_l', 'n_u']),
         ) \
         for dtype, data \
         in all_dicts.items()
@@ -199,12 +199,13 @@ def create_dataframes(
 def write_dfs_to_db(
     dataframes: dict[DataType, DataFrame],
     connection: Connection,
-    if_table_exists: Literal['append', 'replace', 'fail'] = 'append',
+    if_exists: Literal['append', 'replace', 'fail'] = 'append',
 ) -> None:
     
     for table_name, df in dataframes.items():
-        df.write_database(
+        df.to_sql(
             table_name,
             connection,
-            if_table_exists = if_table_exists,
+            if_exists = if_exists,
+            index = False,
         )

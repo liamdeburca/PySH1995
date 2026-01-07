@@ -18,15 +18,16 @@ if __name__ == '__main__':
         description = "Initialises a database.",
     )
     parser.add_argument(
-        '-n',
         '--name',
+        required = False,
         default = 'db',
         type = str,
+        help = 'desired name of the database',
     )
-    name: str = parser.parse_args().name
+    args = parser.parse_args()
 
-    path_to_db: Path = db_dir / f"{name}.db"
+    path_to_db: Path = db_dir / f"{args.name}.db"
     if path_to_db.exists():
-        raise ValueError(f"Database with name '{name}' already exists!")
+        raise ValueError(f"Database with name '{args.name}' already exists!")
     else:
         _ = initialise_db(path_to_db)
