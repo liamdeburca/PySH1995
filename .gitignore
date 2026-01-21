@@ -12,3 +12,4 @@ VI_64/*
 
 # Ignore Jupyter notebooks (used for small tests)
 *.ipynb
+*.npy
